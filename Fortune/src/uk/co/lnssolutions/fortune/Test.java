@@ -1,5 +1,6 @@
 package uk.co.lnssolutions.fortune;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,10 +10,14 @@ import uk.co.lnssolutions.fortune.api.ApiNgOperations;
 import uk.co.lnssolutions.fortune.constants.Constants;
 import uk.co.lnssolutions.fortune.entities.EventTypeResult;
 import uk.co.lnssolutions.fortune.entities.MarketFilter;
+import uk.co.lnssolutions.fortune.entities.account.AccountFundsResponse;
 import uk.co.lnssolutions.fortune.exceptions.APINGException;
+import uk.co.lnssolutions.fortune.json.utils.ISO8601DateTypeAdapter;
 import uk.co.lnssolutions.fortune.json.utils.JsonrpcRequest;
 import uk.co.lnssolutions.fortune.operations.Authentication;
 import uk.co.lnssolutions.fortune.constants.Fortune;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Test {
 
@@ -64,10 +69,13 @@ public class Test {
              //  }
            }
 		   
-           
            // OK, let's get a P&L
-           
-           
+           System.out.println("Working on account");
+           AccountFundsResponse funds  = jsonOperations.GetAccountFunds("wallet", appKey, token);
+           if (funds != null)
+           {
+        	   System.out.println("Available funds (UK) :"+funds.getAvailableToBetBalance());        	   
+           }
            
 	   }catch(APINGException e)
 	   {
@@ -77,9 +85,7 @@ public class Test {
 	   //Logout
 	   token = Authentication.logout();
 	   System.out.println(token);		   
-   
 
-	   
 	}
 	
 	public int getMarkets(String token){

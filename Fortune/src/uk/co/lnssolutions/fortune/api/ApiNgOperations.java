@@ -14,11 +14,16 @@ import uk.co.lnssolutions.fortune.entities.MarketFilter;
 import uk.co.lnssolutions.fortune.entities.PlaceExecutionReport;
 import uk.co.lnssolutions.fortune.entities.PlaceInstruction;
 import uk.co.lnssolutions.fortune.entities.PriceProjection;
+import uk.co.lnssolutions.fortune.entities.TimeRange;
+import uk.co.lnssolutions.fortune.entities.account.AccountFundsResponse;
+import uk.co.lnssolutions.fortune.enums.IncludeItem;
 import uk.co.lnssolutions.fortune.enums.MarketProjection;
 import uk.co.lnssolutions.fortune.enums.MarketSort;
 import uk.co.lnssolutions.fortune.enums.MatchProjection;
 import uk.co.lnssolutions.fortune.enums.OrderProjection;
+import uk.co.lnssolutions.fortune.enums.Wallet;
 import uk.co.lnssolutions.fortune.exceptions.APINGException;
+import uk.co.lnssolutions.fortune.entities.account.AccountStatementReport;
 
 
 public abstract class ApiNgOperations {
@@ -35,6 +40,9 @@ public abstract class ApiNgOperations {
     protected final String MATCH_PROJECTION = "matchProjection";
     protected final String ORDER_PROJECTION = "orderProjection";
     protected final String locale = Locale.getDefault().toString();
+    
+    // Account params
+    protected final String WALLET = "wallet";
 
 	public abstract List<EventTypeResult> listEventTypes(MarketFilter filter, String appKey, String ssoId) throws APINGException;
 
@@ -46,7 +54,12 @@ public abstract class ApiNgOperations {
 
 	public abstract PlaceExecutionReport placeOrders(String marketId, List<PlaceInstruction> instructions, String customerRef , String appKey, String ssoId) throws APINGException;
 
-    protected abstract String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) throws  APINGException;
+	//  So let's see what can be built on
+	public abstract AccountFundsResponse GetAccountFunds(String wallet,String appKey,String ssoID) throws APINGException;
+	public abstract AccountStatementReport GetAccountStatement(String locale,int fromRecord, int recordCount,TimeRange dateRange,IncludeItem includeItem,Wallet wallet) throws APINGException;
+	
+	
+    protected abstract String makeExchangeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) throws  APINGException;
 
 }
 

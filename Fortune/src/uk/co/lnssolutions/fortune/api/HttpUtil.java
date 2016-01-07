@@ -73,5 +73,12 @@ public class HttpUtil {
         return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
 
     }
+    
+    public String sendPostAccountRequestJsonRpc(String param, String operation, String appKey, String ssoToken) {
+        String apiNgURL = Fortune.getProp().getProperty("ACCOUNT_URL") + Fortune.getProp().getProperty("JSON_RPC_SUFFIX");
+
+        return sendPostRequest(param, operation, appKey, ssoToken, apiNgURL, new JsonResponseHandler());
+
+    }
 
 }

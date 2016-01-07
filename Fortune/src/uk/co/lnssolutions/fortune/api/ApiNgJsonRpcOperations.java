@@ -11,6 +11,7 @@ import uk.co.lnssolutions.fortune.containers.EventTypeResultContainer;
 import uk.co.lnssolutions.fortune.containers.ListMarketBooksContainer;
 import uk.co.lnssolutions.fortune.containers.ListMarketCatalogueContainer;
 import uk.co.lnssolutions.fortune.containers.PlaceOrdersContainer;
+import uk.co.lnssolutions.fortune.containers.account.AccountFundsResponseContainer;
 import uk.co.lnssolutions.fortune.entities.EventTypeResult;
 import uk.co.lnssolutions.fortune.entities.MarketBook;
 import uk.co.lnssolutions.fortune.entities.MarketCatalogue;
@@ -18,11 +19,16 @@ import uk.co.lnssolutions.fortune.entities.MarketFilter;
 import uk.co.lnssolutions.fortune.entities.PlaceExecutionReport;
 import uk.co.lnssolutions.fortune.entities.PlaceInstruction;
 import uk.co.lnssolutions.fortune.entities.PriceProjection;
+import uk.co.lnssolutions.fortune.entities.TimeRange;
+import uk.co.lnssolutions.fortune.entities.account.AccountFundsResponse;
+import uk.co.lnssolutions.fortune.entities.account.AccountStatementReport;
 import uk.co.lnssolutions.fortune.enums.ApiNgOperation;
+import uk.co.lnssolutions.fortune.enums.IncludeItem;
 import uk.co.lnssolutions.fortune.enums.MarketProjection;
 import uk.co.lnssolutions.fortune.enums.MarketSort;
 import uk.co.lnssolutions.fortune.enums.MatchProjection;
 import uk.co.lnssolutions.fortune.enums.OrderProjection;
+import uk.co.lnssolutions.fortune.enums.Wallet;
 import uk.co.lnssolutions.fortune.exceptions.APINGException;
 import uk.co.lnssolutions.fortune.json.utils.JsonConverter;
 import uk.co.lnssolutions.fortune.json.utils.JsonrpcRequest;
@@ -65,8 +71,8 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(FILTER, filter);
         params.put(LOCALE, locale);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTEVENTTYPES.getOperationName(), params, appKey, ssoId);
-        if(debug)
+        String result = getInstance().makeExchangeRequest(ApiNgOperation.LISTEVENTTYPES.getOperationName(), params, appKey, ssoId);
+      // if(debug)
             System.out.println("\nResponse: "+result);
 
         EventTypeResultContainer container = JsonConverter.convertFromJson(result, EventTypeResultContainer.class);
@@ -86,7 +92,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
         params.put(ORDER_PROJECTION, orderProjection);
         params.put(MATCH_PROJECTION, matchProjection);
         params.put("currencyCode", currencyCode);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
+        String result = getInstance().makeExchangeRequest(ApiNgOperation.LISTMARKETBOOK.getOperationName(), params, appKey, ssoId);
         if(debug)
             System.out.println("\nResponse: "+result);
 
@@ -108,7 +114,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
         params.put(SORT, sort);
         params.put(MAX_RESULT, maxResult);
         params.put(MARKET_PROJECTION, marketProjection);
-        String result = getInstance().makeRequest(ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params, appKey, ssoId);
+        String result = getInstance().makeExchangeRequest(ApiNgOperation.LISTMARKETCATALOGUE.getOperationName(), params, appKey, ssoId);
         if(debug)
             System.out.println("\nResponse: "+result);
 
@@ -127,7 +133,7 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
         params.put(MARKET_ID, marketId);
         params.put(INSTRUCTIONS, instructions);
         params.put(CUSTOMER_REF, customerRef);
-        String result = getInstance().makeRequest(ApiNgOperation.PLACORDERS.getOperationName(), params, appKey, ssoId);
+        String result = getInstance().makeExchangeRequest(ApiNgOperation.PLACORDERS.getOperationName(), params, appKey, ssoId);
         if(debug)
             System.out.println("\nResponse: "+result);
 
@@ -140,21 +146,77 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
 
     }
 
-    protected String makeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) {
+	//  So let's see what can be built on
+	public  AccountFundsResponse GetAccountFunds(String wallet,String appKey,String ssoId) throws APINGException{
+        Map<String, Object> params = new HashMap<String, Object>();
+      //  params.put(LOCALE, locale);
+      //  params.put(MARKET_ID, marketId);
+      //  params.put(INSTRUCTIONS, instructions);
+        params.put(WALLET,Wallet.AUSTRALIAN );
+        
+        String result = getInstance().makeAccountRequest(ApiNgOperation.GETACCOUNTFUNDS.getOperationName(), params, appKey, ssoId);
+       // if(debug)
+            System.out.println("\nResponse: "+result);
+
+//        PlaceOrdersContainer container = JsonConverter.convertFromJson(result, PlaceOrdersContainer.class);
+  
+         AccountFundsResponseContainer container = JsonConverter.convertFromJson(result, AccountFundsResponseContainer.class);
+         if(container.getError() != null)
+            throw container.getError().getData().getAPINGException();
+
+         
+         
+        return container.getResult();
+	 // return container;
+	}
+    
+	public  AccountStatementReport GetAccountStatement(String locale,int fromRecord, int recordCount,TimeRange dateRange,IncludeItem includeItem,Wallet wallet) throws APINGException
+	{
+		return null;
+		
+	}
+	
+	
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//
+	//  Two protected methods for calling Betfair - note API endpoint change
+	
+	
+    protected String makeExchangeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) {
         String requestString;
         //Handling the JSON-RPC request
         JsonrpcRequest request = new JsonrpcRequest();
-        request.setId("1");
+        request.setId("1"); //TODO Do we want this ? UK / AUD wallets ?
         request.setMethod(Fortune.getProp().getProperty("SPORTS_APING_V1_0") + operation);
         request.setParams(params);
 
         requestString =  JsonConverter.convertToJson(request);
-        if(debug)
+      //  if(debug)
             System.out.println("\nRequest: "+requestString);
 
         //We need to pass the "sendPostRequest" method a string in util format:  requestString
         HttpUtil requester = new HttpUtil();
         return requester.sendPostRequestJsonRpc(requestString, operation, appKey, ssoToken);
+
+       }
+    
+    protected String makeAccountRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) {
+        String requestString;
+        //Handling the JSON-RPC request
+        JsonrpcRequest request = new JsonrpcRequest();
+        request.setId("1");  //TODO Do we want this ? UK / AUD wallets ?
+        request.setMethod(Fortune.getProp().getProperty("ACCOUNT_APING_V1_0") + operation);
+        request.setParams(params);
+
+        requestString =  JsonConverter.convertToJson(request);
+      //  if(debug)
+            System.out.println("\nRequest: "+requestString);
+
+        //We need to pass the "sendPostRequest" method a string in util format:  requestString
+        HttpUtil requester = new HttpUtil();
+        return requester.sendPostAccountRequestJsonRpc(requestString, operation, appKey, ssoToken);
 
        }
 
