@@ -24,6 +24,7 @@ import uk.co.lnssolutions.fortune.enums.OrderProjection;
 import uk.co.lnssolutions.fortune.enums.Wallet;
 import uk.co.lnssolutions.fortune.exceptions.APINGException;
 import uk.co.lnssolutions.fortune.entities.account.AccountStatementReport;
+import uk.co.lnssolutions.fortune.entities.account.StatementItem;
 
 
 public abstract class ApiNgOperations {
@@ -56,7 +57,7 @@ public abstract class ApiNgOperations {
 
 	//  So let's see what can be built on
 	public abstract AccountFundsResponse GetAccountFunds(String wallet,String appKey,String ssoID) throws APINGException;
-	public abstract AccountStatementReport GetAccountStatement(String locale,int fromRecord, int recordCount,TimeRange dateRange,IncludeItem includeItem,Wallet wallet) throws APINGException;
+	public abstract AccountStatementReport GetAccountStatement(String locale,int fromRecord, int recordCount,TimeRange dateRange,IncludeItem includeItem,Wallet wallet,String appKey,String ssoID) throws APINGException;
 	
 	
     protected abstract String makeExchangeRequest(String operation, Map<String, Object> params, String appKey, String ssoToken) throws  APINGException;

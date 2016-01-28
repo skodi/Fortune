@@ -1,8 +1,11 @@
 package uk.co.lnssolutions.fortune;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import uk.co.lnssolutions.fortune.api.ApiNgJsonRpcOperations;
@@ -10,7 +13,11 @@ import uk.co.lnssolutions.fortune.api.ApiNgOperations;
 import uk.co.lnssolutions.fortune.constants.Constants;
 import uk.co.lnssolutions.fortune.entities.EventTypeResult;
 import uk.co.lnssolutions.fortune.entities.MarketFilter;
+import uk.co.lnssolutions.fortune.entities.TimeRange;
 import uk.co.lnssolutions.fortune.entities.account.AccountFundsResponse;
+import uk.co.lnssolutions.fortune.entities.account.AccountStatementReport;
+import uk.co.lnssolutions.fortune.enums.IncludeItem;
+import uk.co.lnssolutions.fortune.enums.Wallet;
 import uk.co.lnssolutions.fortune.exceptions.APINGException;
 import uk.co.lnssolutions.fortune.json.utils.ISO8601DateTypeAdapter;
 import uk.co.lnssolutions.fortune.json.utils.JsonrpcRequest;
@@ -76,6 +83,31 @@ public class Test {
            {
         	   System.out.println("Available funds (UK) :"+funds.getAvailableToBetBalance());        	   
            }
+           
+           // Then let's try for a statement request. Complex response
+           System.out.println("Trying for statement");
+           
+           // Setup fields for search
+           String locale = Locale.getDefault().toString();
+          
+           TimeRange dateRange = new TimeRange();
+           Calendar cal = Calendar.getInstance();
+           cal.setTime(new Date());
+           dateRange.setTo(cal.getTime());
+           cal.add(Calendar.DAY_OF_YEAR,-5);
+           dateRange.setFrom(cal.getTime());
+           System.out.println("Date range "+dateRange.toString());
+           // In reality, date range will be max(statement date in database) -> now. 
+           
+           AccountStatementReport report = jsonOperations.GetAccountStatement(
+        	        locale, 
+        	        0, 
+        	        10, 
+        	        dateRange, 
+        	        IncludeItem.ALL, 
+        	        Wallet.UK, 
+        	        appKey, 
+        	        token);
            
 	   }catch(APINGException e)
 	   {

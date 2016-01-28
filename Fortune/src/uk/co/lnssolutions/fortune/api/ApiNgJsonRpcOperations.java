@@ -12,6 +12,7 @@ import uk.co.lnssolutions.fortune.containers.ListMarketBooksContainer;
 import uk.co.lnssolutions.fortune.containers.ListMarketCatalogueContainer;
 import uk.co.lnssolutions.fortune.containers.PlaceOrdersContainer;
 import uk.co.lnssolutions.fortune.containers.account.AccountFundsResponseContainer;
+import uk.co.lnssolutions.fortune.containers.account.AccountStatementContainer;
 import uk.co.lnssolutions.fortune.entities.EventTypeResult;
 import uk.co.lnssolutions.fortune.entities.MarketBook;
 import uk.co.lnssolutions.fortune.entities.MarketCatalogue;
@@ -22,6 +23,7 @@ import uk.co.lnssolutions.fortune.entities.PriceProjection;
 import uk.co.lnssolutions.fortune.entities.TimeRange;
 import uk.co.lnssolutions.fortune.entities.account.AccountFundsResponse;
 import uk.co.lnssolutions.fortune.entities.account.AccountStatementReport;
+import uk.co.lnssolutions.fortune.entities.account.StatementItem;
 import uk.co.lnssolutions.fortune.enums.ApiNgOperation;
 import uk.co.lnssolutions.fortune.enums.IncludeItem;
 import uk.co.lnssolutions.fortune.enums.MarketProjection;
@@ -149,10 +151,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
 	//  So let's see what can be built on
 	public  AccountFundsResponse GetAccountFunds(String wallet,String appKey,String ssoId) throws APINGException{
         Map<String, Object> params = new HashMap<String, Object>();
-      //  params.put(LOCALE, locale);
+         params.put(LOCALE, locale);
       //  params.put(MARKET_ID, marketId);
       //  params.put(INSTRUCTIONS, instructions);
-        params.put(WALLET,Wallet.AUSTRALIAN );
+        params.put(WALLET,Wallet.UK );
         
         String result = getInstance().makeAccountRequest(ApiNgOperation.GETACCOUNTFUNDS.getOperationName(), params, appKey, ssoId);
        // if(debug)
@@ -170,10 +172,34 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
 	 // return container;
 	}
     
-	public  AccountStatementReport GetAccountStatement(String locale,int fromRecord, int recordCount,TimeRange dateRange,IncludeItem includeItem,Wallet wallet) throws APINGException
+	public  AccountStatementReport GetAccountStatement(String locale,int fromRecord, int recordCount,TimeRange dateRange,IncludeItem includeItem,Wallet wallet,String appKey,String ssoId) throws APINGException
 	{
-		return null;
-		
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put(LOCALE, locale);
+      //  params.put(MARKET_ID, marketId);
+      //  params.put(INSTRUCTIONS, instructions);
+        params.put(WALLET,Wallet.AUSTRALIAN );
+        String resultStr = getInstance().makeAccountRequest(ApiNgOperation.GETACCOUNTSTATEMENT.getOperationName(), params, appKey, ssoId);
+       // if(debug)
+            System.out.println("\nResponse: "+resultStr);
+
+//        PlaceOrdersContainer container = JsonConverter.convertFromJson(result, PlaceOrdersContainer.class);
+  
+         AccountStatementContainer container = JsonConverter.convertFromJson(resultStr, AccountStatementContainer.class);
+         if(container.getError() != null)
+            throw container.getError().getData().getAPINGException();
+         
+        // So have we parse the data then ?
+         AccountStatementReport test = container.getResult();
+         if (test != null) System.out.println("Statement Report is not null");
+         else System.out.println("Statement Report is null");
+         
+         if (test != null) System.out.println(test.report());
+         
+         List statementItems = test.getAccountStatement();
+         if (statementItems == null) System.out.println("We have items of some descripgtion");
+        return container.getResult();	
+    
 	}
 	
 	

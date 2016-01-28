@@ -13,7 +13,8 @@ public enum ApiNgOperation {
 	PLACORDERS("placeOrders"),
 	
 	//Account API
-	GETACCOUNTFUNDS("getAccountFunds");
+	GETACCOUNTFUNDS("getAccountFunds"),
+	GETACCOUNTSTATEMENT("getAccountStatement");
 	
 	
 	private String operationName;

@@ -23,5 +23,10 @@ public class TimeRange {
 	public final void setTo(Date to) {
 		this.to = to;
 	}
+	
+	public String toString(){
+		return from + " -- " + to;
+	}
+	
 
 }
