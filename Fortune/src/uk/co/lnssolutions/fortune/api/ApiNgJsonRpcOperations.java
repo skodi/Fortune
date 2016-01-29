@@ -178,10 +178,10 @@ public class ApiNgJsonRpcOperations extends ApiNgOperations{
         params.put(LOCALE, locale);
       //  params.put(MARKET_ID, marketId);
       //  params.put(INSTRUCTIONS, instructions);
-        params.put(WALLET,Wallet.AUSTRALIAN );
+      // params.put(WALLET,Wallet.AUSTRALIAN );
         String resultStr = getInstance().makeAccountRequest(ApiNgOperation.GETACCOUNTSTATEMENT.getOperationName(), params, appKey, ssoId);
        // if(debug)
-            System.out.println("\nResponse: "+resultStr);
+            System.out.println("\nResponse :"+resultStr);
 
 //        PlaceOrdersContainer container = JsonConverter.convertFromJson(result, PlaceOrdersContainer.class);
   

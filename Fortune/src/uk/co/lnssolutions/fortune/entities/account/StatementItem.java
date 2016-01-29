@@ -3,7 +3,6 @@ package uk.co.lnssolutions.fortune.entities.account;
 import java.util.Date;
 import java.util.Map;
 
-import uk.co.lnssolutions.fortune.containers.account.AccountStatementItemClassDataContainer;
 import uk.co.lnssolutions.fortune.enums.ItemClass;
 
 public class StatementItem {
@@ -13,11 +12,12 @@ public class StatementItem {
 	private Double amount;
 	private Double balance;
 	private ItemClass itemClass;
+	private ItemClassData itemClassData;
+	
 	//private Map<String,String> itemClassData;
 	private StatementLegacyData legacyData;
 	
-	// Map for itemClassData - unknownStatementItem is the holder for the data, not ItemClass
-    private AccountStatementItemClassDataContainer itemClassData;
+
 	
 	
 	public String getRefId() {
@@ -63,15 +63,16 @@ public class StatementItem {
 		return legacyData;
 	}
 
+	public ItemClassData getItemClassData() {
+		return itemClassData;
+	}
+	public void setItemClassData(ItemClassData itemClassData) {
+		this.itemClassData = itemClassData;
+	}
 	public void setLegacyData(StatementLegacyData legacyData) {
 		this.legacyData = legacyData;
 	}
-	public AccountStatementItemClassDataContainer getItemClassData() {
-		return itemClassData;
-	}
-	public void setItemClassData(AccountStatementItemClassDataContainer itemClassData) {
-		this.itemClassData = itemClassData;
-	}
+
 	public void setItemClass(ItemClass itemClass) {
 		this.itemClass = itemClass;
 	}

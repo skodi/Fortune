@@ -58,8 +58,8 @@ public class AccountStatementReport extends Container {
 				   String data = item.getItemClassData().get(key);
 				   System.out.println("\n--   "+key+"\t\t\t\t"+data);
 			   }*/
-			   System.out.println("1:"+item.getItemClassData().toString());
-			   System.out.println("2:"+item.getItemClassData().getUnknownStatementItem().toString());
+			   System.out.println("1:"+item.getItemClassData().getUnknownStatementItem().toString());
+			
 			   
 			   System.out.println("");
 			   System.out.println("  Legacy Data ");
